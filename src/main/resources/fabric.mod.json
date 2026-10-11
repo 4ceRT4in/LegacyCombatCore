@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "legacycombatcore",
+	"version": "${version}",
+	"name": "Legacy Combat Core",
+	"description": "A modular foundation for bringing legacy combat mechanics to modern Minecraft.",
+	"authors": [
+		"4ceRT4in"
+	],
+	"contact": {
+		"sources": "https://github.com/4ceRT4in/LegacyCombatCore",
+		"issues": "https://github.com/4ceRT4in/LegacyCombatCore/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/legacycombatcore/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.legacycombatcore.LegacyCombatCore"
+		],
+		"client": [
+			"dev.legacycombatcore.client.LegacyCombatCoreClient"
+		]
+	},
+	"mixins": [
+		"legacycombatcore.mixins.json",
+		{
+			"config": "legacycombatcore.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
