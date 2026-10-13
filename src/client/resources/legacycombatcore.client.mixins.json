@@ -2,7 +2,11 @@
 	"required": true,
 	"package": "dev.legacycombatcore.client.mixin",
 	"compatibilityLevel": "JAVA_21",
-	"client": [],
+	"client": [
+		"GuiMixin",
+		"HumanoidArmorLayerMixin",
+		"ItemInHandRendererMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	},

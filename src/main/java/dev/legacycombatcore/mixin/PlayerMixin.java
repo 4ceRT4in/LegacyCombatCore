@@ -13,6 +13,30 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Player.class)
 abstract class PlayerMixin {
 	@Redirect(
+			method = "tick",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/player/Player;resetAttackStrengthTicker()V"
+			)
+	)
+	private void legacyCombatCore$keepAttackStrengthWhenChangingItems(Player player) {
+		// 1.8.9 had no item-change attack cooldown. Keep the attack-triggered reset in Player#attack intact.
+	}
+
+	@Redirect(
+			method = "attack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/player/Player;isSprinting()Z",
+					ordinal = 1
+			)
+	)
+	private boolean legacyCombatCore$allowCriticalHitsWhileSprinting(Player player) {
+		// This is the sprint exclusion in the critical-hit predicate. The first call controls sprint knockback.
+		return false;
+	}
+
+	@Redirect(
 			method = "attack",
 			at = @At(
 					value = "INVOKE",
@@ -47,5 +71,16 @@ abstract class PlayerMixin {
 			float pitch
 	) {
 		// Minecraft 1.8.9 had no separate weak, strong, critical, knockback, sweep or no-damage attack sounds.
+	}
+
+	@Redirect(
+			method = "attack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/player/Player;sweepAttack()V"
+			)
+	)
+	private void legacyCombatCore$suppressSweepAttackTexture(Player player) {
+		// Keep the requested combat behavior, but do not spawn the modern white sweep particle.
 	}
 }

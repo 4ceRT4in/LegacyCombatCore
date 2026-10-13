@@ -29,6 +29,16 @@ Common code lives in `src/main`, while client-only code lives in `src/client`. M
 - Minecraft 1.8.9 base, sprint and Knockback-enchantment velocity application
 - Minecraft 1.8.9 probabilistic knockback-resistance behavior
 - Minecraft 1.8.9 hit-sound behavior without the modern split player-attack sounds
+- Critical hits while sprinting
+- Hotbar item changes no longer reset attack strength
+- The legacy linear armor formula and randomized enchantment-protection factor
+- Minecraft 1.8.9 projectile spawn, inherited-motion and inaccuracy behavior
+- The legacy hurt overlay on rendered armor
+- Minecraft 1.8.9 first-person bow pose and draw movement
+- No cooldown-driven main-hand dip or attack-indicator HUD
+- No modern sweep-attack particle
+
+
 
 ## License
 
