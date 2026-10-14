@@ -8,10 +8,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 abstract class PlayerMixin {
+	@Inject(method = "getAttackStrengthScale", at = @At("HEAD"), cancellable = true)
+	private void legacyCombatCore$removeAttackCooldown(
+			float partialTick,
+			CallbackInfoReturnable<Float> callbackInfo
+	) {
+		// 1.8.9 attacks always used full base and enchantment damage and passed the
+		// full-strength predicates used by critical and sprint-knockback attacks.
+		callbackInfo.setReturnValue(1.0F);
+	}
+
 	@Redirect(
 			method = "tick",
 			at = @At(
@@ -20,7 +32,18 @@ abstract class PlayerMixin {
 			)
 	)
 	private void legacyCombatCore$keepAttackStrengthWhenChangingItems(Player player) {
-		// 1.8.9 had no item-change attack cooldown. Keep the attack-triggered reset in Player#attack intact.
+		// 1.8.9 had no item-change attack cooldown.
+	}
+
+	@Redirect(
+			method = "attack",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/player/Player;resetAttackStrengthTicker()V"
+			)
+	)
+	private void legacyCombatCore$doNotResetAttackStrengthAfterAttacking(Player player) {
+		// There was no attack-strength timer to reset in 1.8.9.
 	}
 
 	@Redirect(

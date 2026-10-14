@@ -34,8 +34,13 @@ abstract class LivingEntityMixin {
 					target = "Lnet/minecraft/world/damagesource/CombatRules;getDamageAfterMagicAbsorb(FF)F"
 			)
 	)
-	private float legacyCombatCore$applyLegacyEnchantmentProtection(float damage, float protection) {
-		return LegacyDamage.applyEnchantmentProtection(damage, protection);
+	private float legacyCombatCore$applyLegacyEnchantmentProtection(
+			float damage,
+			float protection,
+			DamageSource source,
+			float originalDamage
+	) {
+		return LegacyDamage.applyEnchantmentProtection((LivingEntity)(Object)this, source, damage);
 	}
 
 	@Redirect(

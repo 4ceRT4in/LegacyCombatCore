@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Projectile.class)
 abstract class ProjectileMixin {
@@ -23,6 +24,21 @@ abstract class ProjectileMixin {
 	private static final double LEGACY_INACCURACY = 0.0075;
 	@Unique
 	private static final double MODERN_TRIANGLE_DEVIATION = 0.0172275;
+	@Unique
+	private static final int LEGACY_OWNER_IMMUNITY_TICKS = 5;
+
+	@Inject(method = "canHitEntity", at = @At("HEAD"), cancellable = true)
+	private void legacyCombatCore$useTimedOwnerImmunity(
+			Entity target,
+			CallbackInfoReturnable<Boolean> callbackInfo
+	) {
+		Projectile projectile = (Projectile)(Object)this;
+		Entity owner = projectile.getOwner();
+		if (legacyCombatCore$usesLegacyTrajectory(projectile) && owner != null && target == owner) {
+			boolean validTarget = !target.isSpectator() && target.isAlive() && target.isPickable();
+			callbackInfo.setReturnValue(validTarget && projectile.tickCount >= LEGACY_OWNER_IMMUNITY_TICKS);
+		}
+	}
 
 	@Inject(method = "shootFromRotation", at = @At("HEAD"))
 	private void legacyCombatCore$applyLegacySpawnOffset(

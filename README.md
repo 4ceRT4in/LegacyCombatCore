@@ -30,11 +30,12 @@ Common code lives in `src/main`, while client-only code lives in `src/client`. M
 - Minecraft 1.8.9 probabilistic knockback-resistance behavior
 - Minecraft 1.8.9 hit-sound behavior without the modern split player-attack sounds
 - Critical hits while sprinting
-- Hotbar item changes no longer reset attack strength
-- The legacy linear armor formula and randomized enchantment-protection factor
-- Minecraft 1.8.9 projectile spawn, inherited-motion and inaccuracy behavior
+- No attack cooldown: every hit uses full base/enchantment damage and the full-strength combat predicates
+- The legacy linear armor formula and per-enchantment 1.8.9 protection factors, including EPF randomization
+- Minecraft 1.8.9 projectile spawn, inherited-motion, inaccuracy and five-tick owner-immunity behavior
+- Minecraft 1.8.9 living-target pick border (0.1 blocks)
 - The legacy hurt overlay on rendered armor
-- Minecraft 1.8.9 first-person bow pose and draw movement
+- Minecraft 1.8.9 first-person bow pose and draw movement without cooldown-driven hand lowering
 - No cooldown-driven main-hand dip or attack-indicator HUD
 - No modern sweep-attack particle
 
