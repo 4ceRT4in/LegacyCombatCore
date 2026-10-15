@@ -4,6 +4,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.entity.projectile.ThrownTrident;
@@ -26,6 +27,17 @@ abstract class ProjectileMixin {
 	private static final double MODERN_TRIANGLE_DEVIATION = 0.0172275;
 	@Unique
 	private static final int LEGACY_OWNER_IMMUNITY_TICKS = 5;
+
+	@Inject(method = "isPickable", at = @At("HEAD"), cancellable = true)
+	private void legacyCombatCore$doNotTargetFishingHooks(
+			CallbackInfoReturnable<Boolean> callbackInfo
+	) {
+		// A hooked bobber can otherwise take over the crosshair's entity hit result
+		// and prevent the victim from placing a block behind it.
+		if ((Object)this instanceof FishingHook) {
+			callbackInfo.setReturnValue(false);
+		}
+	}
 
 	@Inject(method = "canHitEntity", at = @At("HEAD"), cancellable = true)
 	private void legacyCombatCore$useTimedOwnerImmunity(

@@ -34,8 +34,10 @@ Common code lives in `src/main`, while client-only code lives in `src/client`. M
 - The legacy linear armor formula and per-enchantment 1.8.9 protection factors, including EPF randomization
 - Minecraft 1.8.9 projectile spawn, inherited-motion, inaccuracy and five-tick owner-immunity behavior
 - Minecraft 1.8.9 living-target pick border (0.1 blocks)
+- Fishing hooks no longer block block-placement targeting and are hidden from a hooked local player
 - The legacy hurt overlay on rendered armor
 - Minecraft 1.8.9 first-person bow pose and draw movement without cooldown-driven hand lowering
+- Minecraft 1.8.9 critical-hit, enchanted-hit and critical-arrow particles without modern damage indicators
 - No cooldown-driven main-hand dip or attack-indicator HUD
 - No modern sweep-attack particle
 

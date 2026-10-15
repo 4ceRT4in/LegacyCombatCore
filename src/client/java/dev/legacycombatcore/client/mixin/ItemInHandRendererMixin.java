@@ -126,10 +126,14 @@ abstract class ItemInHandRendererMixin {
 	}
 
 	private static void legacyCombatCore$applyLegacyBowModelTransform(PoseStack poseStack, int direction) {
-		// The 1.8.9 bow model supplied this first-person transform after ItemRenderer's hand transform.
+		// 1.8.9 scales flat/generated models up before applying their camera transform, then
+		// scales the baked model itself back down while rendering. The scales cancel for the
+		// geometry, but deliberately double the camera translation in between.
+		poseStack.scale(2.0F, 2.0F, 2.0F);
 		poseStack.translate(0.0F, 4.0F / 16.0F, 2.0F / 16.0F);
 		poseStack.mulPose(Axis.YP.rotationDegrees(direction * -135.0F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(direction * 25.0F));
 		poseStack.scale(1.7F, 1.7F, 1.7F);
+		poseStack.scale(0.5F, 0.5F, 0.5F);
 	}
 }

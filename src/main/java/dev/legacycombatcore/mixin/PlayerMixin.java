@@ -1,6 +1,8 @@
 package dev.legacycombatcore.mixin;
 
 import dev.legacycombatcore.combat.LegacyKnockback;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -105,5 +107,29 @@ abstract class PlayerMixin {
 	)
 	private void legacyCombatCore$suppressSweepAttackTexture(Player player) {
 		// Keep the requested combat behavior, but do not spawn the modern white sweep particle.
+	}
+
+	@Redirect(
+		method = "attack",
+		at = @At(
+				value = "INVOKE",
+				target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
+		)
+	)
+	private int legacyCombatCore$suppressModernDamageIndicators(
+			ServerLevel level,
+			ParticleOptions particle,
+			double x,
+			double y,
+			double z,
+			int count,
+			double offsetX,
+			double offsetY,
+			double offsetZ,
+			double speed
+	) {
+		// The damage-indicator particle was added after 1.8.9. This is the only
+		// ServerLevel#sendParticles invocation in Player#attack.
+		return 0;
 	}
 }
