@@ -2,6 +2,7 @@ package dev.legacycombatcore.mixin;
 
 import dev.legacycombatcore.combat.LegacyKnockback;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -95,7 +97,20 @@ abstract class PlayerMixin {
 			float volume,
 			float pitch
 	) {
+		if (legacyCombatCore$isSpear((Player)(Object)this)) {
+			level.playSound(excludedPlayer, x, y, z, sound, source, volume, pitch);
+		}
+
 		// Minecraft 1.8.9 had no separate weak, strong, critical, knockback, sweep or no-damage attack sounds.
+	}
+
+	@Unique
+	private static boolean legacyCombatCore$isSpear(Player player) {
+		String itemPath = BuiltInRegistries.ITEM.getKey(player.getMainHandItem().getItem()).getPath();
+		return itemPath.equals("spear")
+				|| itemPath.startsWith("spear_")
+				|| itemPath.endsWith("_spear")
+				|| itemPath.contains("_spear_");
 	}
 
 	@Redirect(
