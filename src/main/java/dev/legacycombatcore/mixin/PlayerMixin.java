@@ -28,6 +28,15 @@ abstract class PlayerMixin {
 		callbackInfo.setReturnValue(1.0F);
 	}
 
+	@Inject(method = "getFireImmuneTicks", at = @At("HEAD"), cancellable = true)
+	private void legacyCombatCore$ignitePlayersImmediately(
+			CallbackInfoReturnable<Integer> callbackInfo
+	) {
+		// Modern players wait twenty ticks before their visible fire timer starts.
+		// The entity default of one tick ignites them on their first fire collision.
+		callbackInfo.setReturnValue(1);
+	}
+
 	@Redirect(
 			method = "tick",
 			at = @At(

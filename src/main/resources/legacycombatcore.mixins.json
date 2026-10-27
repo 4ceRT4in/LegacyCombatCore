@@ -3,6 +3,7 @@
 	"package": "dev.legacycombatcore.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"BucketItemMixin",
 		"LivingEntityMixin",
 		"PlayerMixin",
 		"ProjectileMixin"
