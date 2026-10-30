@@ -2,8 +2,11 @@ package dev.legacycombatcore.mixin;
 
 import dev.legacycombatcore.combat.LegacyDamage;
 import dev.legacycombatcore.combat.LegacyKnockback;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -76,9 +79,23 @@ abstract class LivingEntityMixin {
 			LivingEntity target,
 			DamageSource source
 	) {
-		// The shield-block entity event has already been broadcast to the defender
-		// and tracking attacker. Do not cover it with the regular damage sound.
-		if (!target.isDamageSourceBlocked(source)) {
+		if (target.isDamageSourceBlocked(source)) {
+			if (target instanceof Player defendingPlayer) {
+				// The entity event plays the shield sound for the defending local player.
+				// Send it separately to nearby players because remote player entities do
+				// not replay that event sound on the attacker's client.
+				target.level().playSound(
+						defendingPlayer,
+						target.getX(),
+						target.getY(),
+						target.getZ(),
+						SoundEvents.SHIELD_BLOCK,
+						SoundSource.PLAYERS,
+						1.0F,
+						0.8F + target.level().random.nextFloat() * 0.4F
+				);
+			}
+		} else {
 			this.playHurtSound(source);
 		}
 	}

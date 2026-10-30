@@ -23,7 +23,7 @@ abstract class BucketItemMixin {
 					target = "Lnet/minecraft/world/item/BucketItem;emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;)Z"
 			)
 	)
-	private boolean legacyCombatCore$placeWaterAboveWaterloggableBlocks(
+	private boolean legacyCombatCore$placeFluidsWithoutWaterlogging(
 			BucketItem bucket,
 			Player player,
 			Level level,
@@ -33,13 +33,14 @@ abstract class BucketItemMixin {
 		BlockPos hitPos = hitResult.getBlockPos();
 		BlockState hitState = level.getBlockState(hitPos);
 		if (bucket == Items.WATER_BUCKET && hitState.getBlock() instanceof LiquidBlockContainer) {
-			// Before waterlogging existed, a water bucket targeted the free block above
-			// blocks such as slabs, stairs and fences instead of filling the block itself.
-			return bucket.emptyContents(player, level, hitPos.above(), null);
+			// Before waterlogging existed, a water bucket targeted the adjacent block
+			// on the clicked face instead of filling slabs, stairs, fences, and similar blocks.
+			BlockPos adjacentPos = hitPos.relative(hitResult.getDirection());
+			return bucket.emptyContents(player, level, adjacentPos, null);
 		}
 
-		if (legacyCombatCore$isPlainFluidBucket(bucket) && legacyCombatCore$isReplaceablePlant(hitState)) {
-			// Target the plant itself instead of the adjacent block selected by the
+		if (legacyCombatCore$isPlainFluidBucket(bucket) && legacyCombatCore$isDirectlyReplaceable(hitState)) {
+			// Target the replaceable block itself instead of the adjacent block selected by the
 			// modern bucket code. emptyContents then replaces it with the fluid source.
 			return bucket.emptyContents(player, level, hitPos, null);
 		}
@@ -53,7 +54,10 @@ abstract class BucketItemMixin {
 	}
 
 	@Unique
-	private static boolean legacyCombatCore$isReplaceablePlant(BlockState state) {
-		return state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN) || state.is(Blocks.DEAD_BUSH);
+	private static boolean legacyCombatCore$isDirectlyReplaceable(BlockState state) {
+		return state.is(Blocks.SHORT_GRASS)
+				|| state.is(Blocks.FERN)
+				|| state.is(Blocks.DEAD_BUSH)
+				|| state.is(Blocks.SNOW);
 	}
 }
